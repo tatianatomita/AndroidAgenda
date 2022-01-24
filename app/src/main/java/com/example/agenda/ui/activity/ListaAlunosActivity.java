@@ -4,9 +4,6 @@ import static com.example.agenda.ui.activity.ConstantesActivity.CHAVE_ALUNO;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -18,12 +15,11 @@ import com.example.agenda.dao.AlunoDao;
 import com.example.agenda.modelo.Aluno;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
 public class ListaAlunosActivity extends AppCompatActivity {
 
     public static final String TITULO_APPBAR = "Lista de Alunos";
     private final AlunoDao dao = new AlunoDao();
+    private ArrayAdapter<Aluno> adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +28,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_alunos);
         setTitle(TITULO_APPBAR);
         configuraFabNovoAluno();
+        configuraLista();
         dao.salvar(new Aluno("tatiana", "11464544545", "tati@gmail.com"));//apenas pra facilitar testes
         dao.salvar(new Aluno("sandro", "1115442112", "sandro@gmail.com"));//apenas pra facilitar testes
 
@@ -49,21 +46,34 @@ public class ListaAlunosActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        configuraLista();
+        atualizaAlunos();
+
+    }
+
+    private void atualizaAlunos() {
+        adapter.clear();
+        adapter.addAll(dao.todos());
     }
 
     private void configuraLista() {
         ListView listaDeAlunos = findViewById(R.id.activity_lista_de_alunos_listview);
-        final List<Aluno> alunos = dao.todos();
-        configuraAdapter(listaDeAlunos, alunos);
+        configuraAdapter(listaDeAlunos);
         configuraListenerDeClickPorItem(listaDeAlunos);
+        configuraListenerDeClickLongoPorItem(listaDeAlunos);
+
+    }
+
+    private void configuraListenerDeClickLongoPorItem(ListView listaDeAlunos) {
         listaDeAlunos.setOnItemLongClickListener((adapterView, view, posicao, id) -> {
-        Log.i("click longo  ", String.valueOf(posicao));
             Aluno alunoEscolhido = (Aluno) adapterView.getItemAtPosition(posicao);
-            dao.remove(alunoEscolhido);
+            remove(alunoEscolhido);
             return true;
         });
+    }
 
+    private void remove(Aluno aluno) {
+        dao.remove(aluno);
+        adapter.remove(aluno);
     }
 
     private void configuraListenerDeClickPorItem(ListView listaDeAlunos) {
@@ -81,7 +91,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
         startActivity(vaiParaFormularioActivity);
     }
 
-    private void configuraAdapter(ListView listaDeAlunos, List<Aluno> alunos) {
-        listaDeAlunos.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos));
+    private void configuraAdapter(ListView listaDeAlunos) {
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        listaDeAlunos.setAdapter(adapter);
     }
 }

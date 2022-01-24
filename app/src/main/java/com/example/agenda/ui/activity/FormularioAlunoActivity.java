@@ -22,12 +22,7 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     private EditText campoEmail;
     private final AlunoDao dao = new AlunoDao();
     private Aluno aluno;
-//
-//    public FormularioAlunoActivity(EditText campoNome, EditText campoTelefone, EditText campoEmail) {
-//        this.campoNome = campoNome;
-//        this.campoTelefone = campoTelefone;
-//        this.campoEmail = campoEmail;
-//    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
