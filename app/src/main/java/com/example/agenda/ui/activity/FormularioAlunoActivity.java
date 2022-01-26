@@ -4,6 +4,7 @@ import static com.example.agenda.ui.activity.ConstantesActivity.CHAVE_ALUNO;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -33,6 +34,12 @@ public class FormularioAlunoActivity extends AppCompatActivity {
 
         carregaAluno();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_formulario_aluno_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     private void carregaAluno() {
