@@ -4,9 +4,14 @@ import static com.example.agenda.ui.activity.ConstantesActivity.CHAVE_ALUNO;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +36,13 @@ public class ListaAlunosActivity extends AppCompatActivity {
         configuraLista();
         dao.salvar(new Aluno("tatiana", "11464544545", "tati@gmail.com"));//apenas pra facilitar testes
         dao.salvar(new Aluno("sandro", "1115442112", "sandro@gmail.com"));//apenas pra facilitar testes
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.activity_lista_alunos_menu, menu);
 
     }
 
@@ -59,16 +71,20 @@ public class ListaAlunosActivity extends AppCompatActivity {
         ListView listaDeAlunos = findViewById(R.id.activity_lista_de_alunos_listview);
         configuraAdapter(listaDeAlunos);
         configuraListenerDeClickPorItem(listaDeAlunos);
-        configuraListenerDeClickLongoPorItem(listaDeAlunos);
+        registerForContextMenu(listaDeAlunos);
 
     }
 
-    private void configuraListenerDeClickLongoPorItem(ListView listaDeAlunos) {
-        listaDeAlunos.setOnItemLongClickListener((adapterView, view, posicao, id) -> {
-            Aluno alunoEscolhido = (Aluno) adapterView.getItemAtPosition(posicao);
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.activity_lista_alunos_menu_remover) {
+            AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Aluno alunoEscolhido = adapter.getItem(menuInfo.position);
             remove(alunoEscolhido);
-            return true;
-        });
+        }
+
+        return super.onContextItemSelected(item);
     }
 
     private void remove(Aluno aluno) {
